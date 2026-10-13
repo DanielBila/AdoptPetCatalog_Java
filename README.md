@@ -1,6 +1,6 @@
 # AdoptPetCatalog_Java
 
-Catálogo de animais (cães e gatos) em linha de comando, convertido de C# para Java.
+Catálogo de animais (cães e gatos) em linha de comando.
 
 ## Como executar
 
