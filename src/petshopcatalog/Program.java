@@ -1,11 +1,8 @@
 package petshopcatalog;
 
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
-
 import petshopcatalog.entities.Animal;
 import petshopcatalog.service.Connection;
 
