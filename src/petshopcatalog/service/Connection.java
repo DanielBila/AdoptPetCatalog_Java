@@ -1,16 +1,17 @@
 package petshopcatalog.service;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
-import petshopcatalog.entities.Cat;
-import petshopcatalog.entities.Dog;
 import petshopcatalog.entities.Animal;
+import petshopcatalog.util.AgeUtils;
 
 public class Connection {
     private final Scanner sc;
-    public Connection(Scanner sc) {
+    private final AnimalCatalog catalog;
+
+    public Connection(Scanner sc, AnimalCatalog catalog) {
         this.sc = sc;
+        this.catalog = catalog;
     }
 
     public <T> void listPrint(List<T> list) {
@@ -25,60 +26,64 @@ public class Connection {
         }
     }
 
-    public void addAnimal(List<Animal> values) {
+    public void addAnimal() {
     	System.out.println();
     	System.out.println("Enter the type of animal (dog/cat): ");
-        String animalType = switch (sc.nextLine().toLowerCase()) {
-            case "dog" -> "dog";
-            case "cat" -> "cat";
-            default -> "invalido";
-        };
+        String animalType = sc.nextLine().toLowerCase();
 
-        if (animalType.equals("invalido")) {
+        if (!animalType.equals(AnimalCatalog.DOG) && !animalType.equals(AnimalCatalog.CAT)) {
             System.out.println("Invalid animal type. Please enter 'dog' or 'cat'.");
             return;
         }
 
         System.out.println("Enter the name: ");
         String name = sc.nextLine();
-        System.out.println("Enter the age of " + name + ": ");
-        int age = Integer.parseInt(sc.nextLine());
+        System.out.println("Enter the age of " + name + " in years.months (e.g. 0.5 = 5 months, 1.2 = 1 year and 2 months): ");
+        String age = sc.nextLine();
         System.out.println("Enter the sex of " + name + ": ");
         String sex = sc.nextLine();
         System.out.println("Enter the race of " + name + ": ");
         String race = sc.nextLine();
 
-        Animal newAnimal = switch (animalType) {
-            case "dog" -> new Dog(name, age, sex, race, LocalDateTime.now());
-            case "cat" -> new Cat(name, age, sex, race, LocalDateTime.now());
-            default -> throw new IllegalStateException("Unexpected animal type: " + animalType);
-        };
-
-        values.add(newAnimal);
+        // A criação do Dog/Cat e a validação ficam no AnimalCatalog
+        try {
+            catalog.addAnimal(animalType, name, AgeUtils.parse(age), sex, race);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
-    public void removeAnimalByIndex(List<Animal> values) {
-        if (values.isEmpty()) {
+    public void removeAnimalByIndex() {
+        if (catalog.size() == 0) {
             System.out.println("The list is empty.");
             return;
         }
 
         System.out.println("Current animals:");
-        for (int i = 0; i < values.size(); i++) {
-            Animal a = values.get(i);
-            System.out.println((i + 1) + ". " + a.getName() + " (" + a.getRace() + ", " + a.getAge() + " anos)");
+        List<Animal> animals = catalog.getAnimals();
+        for (int i = 0; i < animals.size(); i++) {
+            Animal a = animals.get(i);
+            System.out.println((i + 1) + ". " + a.getName() + " (" + a.getRace() + ", " + AgeUtils.format(a.getAge()) + ")");
         }
 
         System.out.println("Enter the number of the animal to remove: ");
-        int index = Integer.parseInt(sc.nextLine()) - 1;
-
-        if (index < 0 || index >= values.size()) {
+        Integer number = readInt();
+        if (number == null || number < 1 || number > catalog.size()) {
             System.out.println("Invalid index.");
             return;
         }
 
-        System.out.println(values.get(index).getName() + " removed successfully!");
-        values.remove(index);
+        Animal removed = catalog.removeAnimal(number - 1);
+        System.out.println(removed.getName() + " removed successfully!");
+    }
+
+    // Lê um número inteiro; devolve null se o usuário digitar algo inválido
+    public Integer readInt() {
+        try {
+            return Integer.parseInt(sc.nextLine().trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     @Override

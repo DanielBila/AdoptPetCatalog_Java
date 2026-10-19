@@ -1,13 +1,14 @@
 package petshopcatalog.entities;
 
 import java.time.LocalDateTime;
+import java.time.Period;
 
 public interface Animal {
     String getName();
     void setName(String name);
 
-    int getAge();
-    void setAge(int age);
+    Period getAge();
+    void setAge(Period age);
 
     String getSex();
     void setSex(String sex);

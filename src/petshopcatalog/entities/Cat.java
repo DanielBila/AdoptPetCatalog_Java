@@ -1,15 +1,18 @@
 package petshopcatalog.entities;
 
 import java.time.LocalDateTime;
+import java.time.Period;
+
+import petshopcatalog.util.AgeUtils;
 
 public class Cat implements Animal {
     private String name;
-    private int age;
+    private Period age;
     private String sex;
     private String race;
     private LocalDateTime date;
 
-    public Cat(String name, int age, String sex, String race, LocalDateTime date) {
+    public Cat(String name, Period age, String sex, String race, LocalDateTime date) {
         this.name = name;
         this.age = age;
         this.sex = sex;
@@ -28,12 +31,12 @@ public class Cat implements Animal {
     }
 
     @Override
-    public int getAge() {
+    public Period getAge() {
         return age;
     }
 
     @Override
-    public void setAge(int age) {
+    public void setAge(Period age) {
         this.age = age;
     }
 
@@ -69,6 +72,6 @@ public class Cat implements Animal {
 
     @Override
     public String toString() {
-        return "Cat - " + name + ", " + age + ", " + sex + ", " + race;
+        return "Cat - " + name + ", " + AgeUtils.format(age) + ", " + sex + ", " + race;
     }
 }
